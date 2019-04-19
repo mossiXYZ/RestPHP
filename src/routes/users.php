@@ -73,3 +73,40 @@ $app->post('/api/users/add', function(Request $request, Response $response){
 });
 
 
+
+// Update User
+$app->put('/api/user/update/{login}', function(Request $request, Response $response){
+    $login = $request->getAttribute('login');
+    
+    $first_name = $request->getParam('first_name');
+    $last_name = $request->getParam('last_name');
+    $login = $request->getParam('login');
+    $password = $request->getParam('password');
+
+    $sql = "UPDATE slimapp.users SET
+				first_name 	= :first_name,
+				last_name 	= :last_name,
+                login		= :login,
+                password		= :password
+
+			WHERE login = '$login'";
+    try{
+        // Get DB Object
+        $db = new db();
+        // Connect
+        $db = $db->connect();
+        $stmt = $db->prepare($sql); 
+
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name',  $last_name);
+        $stmt->bindParam(':login',      $login);
+        $stmt->bindParam(':password',    $password);
+
+        $stmt->execute();
+
+        echo '{"notice": {"text": "User Updated"}';
+    } catch(PDOException $e){
+        echo '{"error": {"text": '.$e->getMessage().'}';
+    }
+});
+

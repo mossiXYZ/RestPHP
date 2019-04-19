@@ -110,3 +110,21 @@ $app->put('/api/user/update/{login}', function(Request $request, Response $respo
     }
 });
 
+
+// Delete User
+$app->delete('/api/user/delete/{login}', function(Request $request, Response $response){
+    $login = $request->getAttribute('login');
+    $sql = "DELETE FROM slimapp.users WHERE login = '$login'";
+    try{
+        // Get DB Object
+        $db = new db();
+        // Connect
+        $db = $db->connect();
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        $db = null;
+        echo '{"notice": {"text": "User Deleted"}';
+    } catch(PDOException $e){
+        echo '{"error": {"text": '.$e->getMessage().'}';
+    }
+});

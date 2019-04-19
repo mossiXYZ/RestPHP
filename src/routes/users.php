@@ -39,3 +39,37 @@ $app->get('/api/users/{login}', function(Request $request, Response $response){
         echo '{"error": {"text": '.$e->getMessage().'}';
     }
 });
+
+
+//Add User
+$app->post('/api/users/add', function(Request $request, Response $response){
+    $first_name = $request->getParam('first_name');
+    $last_name = $request->getParam('last_name');
+    $login = $request->getParam('login');
+    $password = $request->getParam('password');
+
+    
+    $sql = "INSERT INTO slimapp.users (first_name,last_name,login,password) VALUES
+    (:first_name,:last_name,:login,:password)";
+
+    try{
+        // Get DB Object
+        $db = new db();
+        // Connect
+        $db = $db->connect();
+        $stmt = $db->prepare($sql);
+
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name',  $last_name);
+        $stmt->bindParam(':login',      $login);
+        $stmt->bindParam(':password',      $password);
+
+        $stmt->execute();
+
+        echo '{"notice": {"text": "Customer Added"}';
+    } catch(PDOException $e){
+        echo '{"error": {"text": '.$e->getMessage().'}';
+    }
+});
+
+
